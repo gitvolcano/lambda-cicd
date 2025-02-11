@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python # Sets up out python env
       uses: actions/setup-python@v2
       with:
-        python-verion: '3.13'
+        python-version: '3.13'
 
     - name: Install Dependencies # Installs any packages
       run: |
@@ -26,8 +26,8 @@ jobs:
     - name: Configure AWS Creds # Sets up our AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}    
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}    
         aws-region: eu-central-1
 
     - name: Deploy Lambda Function # Zips lambda directory and updates lambda function
