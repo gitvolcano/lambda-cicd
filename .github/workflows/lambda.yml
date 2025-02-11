@@ -12,33 +12,40 @@ permissions:
   contents: read
 
 jobs:
-  deploy-lambda: # Name of our job
-    runs-on: ubuntu-latest # Sets or specifies the runner
+  deploy-lambda:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      
 
-    - name: Set up Python # Sets up our python env
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.13'
+        python-version: '3.11'
 
-    - name: Install Dependencies # Install any packages
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r lambda/requirements.txt -t lambda/
     
-    - name: Configure AWS Credentials # Sets up our AWS credentials
+    - name: Debug Secrets
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      run: |
+        if [ -z "$AWS_ACCESS_KEY_ID" ]; then
+          echo "AWS_ACCESS_KEY_ID is NOT set or accessible!"
+        else
+          echo "AWS_ACCESS_KEY_ID is set."
+        fi
+
+    - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-central-1
-  
-    - name: Deploy Lambda Function # Zips lambda directory and updates lambda function
+
+    - name: Deploy Lambda Function
       run: |
         cd lambda
         zip -r lambda.zip .
-        aws lambda update-function-code --function-name my-test-cicd-lambda --zip-file fileb://lambda.zip               
-
-    
+        aws lambda update-function-code --function-name my-test-cicd-lambda --zip-file fileb://lambda.zip
